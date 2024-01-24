@@ -1,0 +1,14 @@
+[Unit]
+Description=Run app on server start
+After=network.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=root
+ExecStart=/usr/bin/run_app.sh
+
+[Install]
+WantedBy=multi-user.target

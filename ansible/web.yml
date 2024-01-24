@@ -1,0 +1,94 @@
+---
+
+- hosts: all
+  name: "Prepare basics"
+  become: true
+  tasks:
+    - name: Install common packages
+      apt:
+        name:
+          - git
+          - curl
+          - vim
+          - tmux
+    - name: Create important dirs
+      file:
+        path: /opt/app
+        state: directory
+        mode: '0755'
+
+- hosts: all
+  name: "Prepare repo and dotnet"
+  become: true
+  tasks:
+    - name: Clone repo
+      git:
+        repo: https://github.com/Elentija/plan_generator.git
+        dest: /opt/app/
+    - name: "Copy install dependencies script"
+      copy:
+        src: ./install_dotnet.sh
+        dest: /usr/bin/install_dotnet.sh
+        mode: '0755'
+    - name: "Install dependencies" 
+      shell: "/usr/bin/install_dotnet.sh"
+
+- hosts: all
+  name: "Prepare app binary"
+  become: true
+  tasks: 
+    - name: Remove obj from app project 
+      file: 
+        path: /opt/app/PlanGeneratorBackend/PlanGenerator/obj
+        state: absent
+    - name: Remove bin from app project 
+      file: 
+        path: /opt/app/PlanGeneratorBackend/PlanGenerator/bin
+        state: absent
+    - name: "Install dependencies" 
+      shell: dotnet build
+      args:
+        chdir: /opt/app/PlanGeneratorBackend/PlanGenerator
+    - name: "Prepare systemd files"
+      copy:
+        src: ./app.service
+        dest: /etc/systemd/system/
+        mode: '0644' # cannot execute
+    - name: "Prepare app config files"
+      copy:
+        src: ./config.yaml
+        dest: /etc/
+        mode: '0644'
+    - name: "Make run_app executable"
+      copy:
+        src: ./run_app.sh
+        dest: /usr/bin/
+        mode: '0755'
+
+- hosts: all
+  name: Start new unit 
+  become: true
+  tasks:
+    - name: "Run db migrations"
+      shell: /root/.dotnet/tools/dotnet-ef database update -- "/MySetting:file=/etc/config.yaml"
+      args:
+        chdir: /opt/app/PlanGeneratorBackend/PlanGenerator   
+    - name: "Start and enable systemd unit (my app)" 
+      systemd:
+        name: app.service
+        daemon_reload: true
+        state: started
+        enabled: true
+
+
+# - hosts: all
+#   name: "Run all the rest..."
+#   become: true
+#   tasks:
+#     - name: "Copy config script"
+#       copy:
+#         src: ./web_config.sh
+#         dest: /usr/bin/configure.sh
+#         mode: '0755'
+#     - name: "Run installation script"
+#       shell: "/usr/bin/configure.sh"

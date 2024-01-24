@@ -1,0 +1,17 @@
+apiVersion: v1
+data:
+  DB_ENGINE: django.db.backends.postgresql_psycopg2
+  DB_HOST: tictactoe_db
+  DB_PORT: "5432"
+  DEBUG: "0"
+  DJANGO_ALLOWED_HOSTS: localhost 127.0.0.1 [::1]
+  POSTGRES_DB: tictactoedb
+  POSTGRES_PASSWORD: tictactoepassword
+  POSTGRES_USER: tictactoeuser
+  SECRET_KEY: django-insecure-6_^ybfqbm1k^6jll-bfn$c3qss951%+jfjbcfn51b79f_a7yb3
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  labels:
+    io.kompose.service: db-backend-backend--env
+  name: backend-backend--env

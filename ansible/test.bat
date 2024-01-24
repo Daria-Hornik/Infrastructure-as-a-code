@@ -1,0 +1,3 @@
+curl http://localhost:8080/api/ClassGroups
+  
+ set /p DUMMY=Hit ENTER to continue...

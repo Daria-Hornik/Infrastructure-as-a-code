@@ -1,0 +1,4 @@
+web_ip: 10.21.37.11
+db_ip: 10.21.37.12
+db_user: sa
+db_pass: Vagrant42
