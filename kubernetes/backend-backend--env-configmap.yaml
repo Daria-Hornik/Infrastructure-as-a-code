@@ -8,7 +8,7 @@ data:
   POSTGRES_DB: tictactoedb
   POSTGRES_PASSWORD: tictactoepassword
   POSTGRES_USER: tictactoeuser
-  SECRET_KEY: django-insecure-6_^ybfqbm1k^6jll-bfn$c3qss951%+jfjbcfn51b79f_a7yb3
+  SECRET_KEY: sekret_key
 kind: ConfigMap
 metadata:
   creationTimestamp: null
